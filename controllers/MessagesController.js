@@ -16,6 +16,7 @@ module.exports = {
 
   getBySenderAndReceiver: (req, res) => {
     Message.query()
+      .withGraphFetched('files')
       .where({
         receiver_id: req.params.receiver,
         sender_id: req.params.sender
@@ -41,6 +42,33 @@ module.exports = {
         type: req.body.type,
         created_at: req.body.created_at,
         send_at: new Date
+      })
+      .then(created => {
+        res.jsonData(200, "OK", created)
+      })
+      .catch(err => {
+        res.jsonData(500, "Database error, cannot send message.", err.message)
+      })
+  },
+
+  storeWithFile: async (req, res) => {
+    await Message.query()
+      .insertGraph({
+        sender_id: req.auth().id,
+        message: req.body.message,
+        receiver_id: req.body.receiver_id,
+        type: req.body.type,
+        created_at: req.body.created_at,
+        send_at: new Date, 
+
+        files: [
+          {
+            name: req.file.originalname,
+            directory: `${req.file.destination}/${req.file.originalname}`,
+            caption: req.body.caption,
+            uploaded_at: new Date
+          }
+        ]
       })
       .then(created => {
         res.jsonData(200, "OK", created)

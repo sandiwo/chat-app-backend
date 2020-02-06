@@ -24,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors());
 app.use(express.static(__dirname + '/public/images/avatars'));
+app.use(express.static(__dirname + '/public/images/message_files'));
 
 app.use(jsonFormat.jsonData);
 app.use(jsonFormat.jsonStatus);

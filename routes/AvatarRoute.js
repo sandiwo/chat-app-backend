@@ -1,24 +1,14 @@
 var express = require('express');
 var router = express.Router();
 const passport = require('passport');
-var multer = require('multer')
+var multer = require('../libraries/multer')
 var Avatar = require('../models/Avatar')
 var AvatarsController = require('../controllers/AvatarsController')
-
-var storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-      cb(null, 'public/images/avatars');
-    },
-    filename: function (req, file, cb) {
-      cb(null , file.originalname);
-    }
-});
-var upload = multer({storage:storage})
 
 router.post('/upload', 
   [
     passport.authenticate('jwt', {session: false}),
-    upload.single('avatar'), async (req, res, next) => {
+    multer.upload.single('avatar'), async (req, res, next) => {
       try{
         await Avatar.query().insert({
           name: req.file.originalname,
