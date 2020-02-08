@@ -53,7 +53,7 @@ module.exports = {
 
   storeWithFile: async (req, res) => {
     await Message.query()
-      .insertGraph({
+      .insertGraphAndFetch({
         sender_id: req.auth().id,
         message: req.body.message,
         receiver_id: req.body.receiver_id,

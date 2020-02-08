@@ -24,10 +24,24 @@ module.exports = function(io) {
     socket.on('readMessage', async function(data) {
       const messages = []
       await asyncForEach(data.messageNotRead, async (message, i) => {
-        messages[i] = await Message.query()
+        if(message.type == 'text') {
+          messages[i] = await Message.query()
                         .patchAndFetchById(message.id, { 
                           read_at: new Date 
                         })
+        } else {
+          messages[i] = await Message.query()
+                        .upsertGraphAndFetch({
+                          id: message.id,
+                          read_at: new Date,
+                          files: [{
+                            name: message.files.name,
+                            directory: message.files.directory,
+                            caption: message.files.caption,
+                            uploaded_at: new Date
+                          }]
+                        })
+        }
       }) 
 
       io.emit('markAsReadMessage', messages)
