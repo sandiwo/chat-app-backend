@@ -25,4 +25,9 @@ router.post('/file', [
   MessagesController.storeWithFile
 ])
 
+router.delete('/:id', [
+  passport.authenticate('jwt', {session: false}),
+  MessagesController.destroy
+])
+
 module.exports = router

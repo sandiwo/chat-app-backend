@@ -61,6 +61,9 @@ module.exports = function(io) {
     socket.on('setUserOnline', function(data) {
     })
 
+    socket.on('markAsDeletedMessage', function(data) {
+      io.emit('markAsDeletedMessage', data)
+    })
   })
 }
 

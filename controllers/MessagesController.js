@@ -76,5 +76,18 @@ module.exports = {
       .catch(err => {
         res.jsonData(500, "Database error, cannot send message.", err.message)
       })
+  },
+
+  destroy: async (req, res) => {
+    await Message.query()
+      .updateAndFetchById(req.params.id, {
+        deleted_at: new Date
+      })
+      .then(deleted => {
+        res.jsonData(200, "OK", deleted)
+      })
+      .catch(err => {
+        res.jsonData(500, "Database error, cannot delete a message.", err.message)
+      })
   }
 }
