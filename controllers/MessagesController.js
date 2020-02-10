@@ -55,7 +55,7 @@ module.exports = {
     await Message.query()
       .insertGraphAndFetch({
         sender_id: req.auth().id,
-        message: req.body.message,
+        message: req.body.caption,
         receiver_id: req.body.receiver_id,
         type: req.body.type,
         created_at: req.body.created_at,
@@ -75,6 +75,20 @@ module.exports = {
       })
       .catch(err => {
         res.jsonData(500, "Database error, cannot send message.", err.message)
+      })
+  },
+
+  update: async (req, res) => {
+    await Message.query()
+      .updateAndFetchById(req.params.id, {
+        message: req.body.message,
+        updated_at: new Date
+      })
+      .then(updated => {
+        res.jsonData(200, "OK", updated)
+      })
+      .catch(err => {
+        res.jsonData(500, "Database error, cannot update a message.", err.message)
       })
   },
 
