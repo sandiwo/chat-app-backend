@@ -17,6 +17,9 @@ passport.use(new LocalStrategy({
     const encryptedPassword = md5(password);
     User.query()
       .withGraphFetched('avatar')
+      .modifyGraph('avatar', builder => {
+        builder.orderBy('uploaded_at', 'DESC')
+      })
       .findOne({ username, password: encryptedPassword })  
       .then((user) => {
         if(! user) return done(null, false, { message: 'Wrong username or password'});
