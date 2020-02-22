@@ -18,3 +18,36 @@ Content-Type: application/json
 {
     "username": "dicky",
 }
+
+###
+// Divider for test groups behaviour
+###
+GET http://localhost:3000/groups
+Content-Type: application/json
+
+###
+POST http://localhost:3000/groups
+Content-Type: application/json
+{
+    "name": "A new group",
+    "description": "Testing store new group"
+}
+
+###
+PUT http://localhost:3000/groups/1
+Content-Type: application/json
+
+{
+    "name": "A group updated name",
+    "description": "Testing group updated description"
+}
+
+###
+DELETE http://localhost:3000/groups/1
+Content-Type: application/json
+
+###
+// Divider for test group participants behaviour
+###
+GET http://localhost:3000/group/1/participant
+Content-Type: application/json

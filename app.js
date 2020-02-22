@@ -11,6 +11,7 @@ var usersRouter = require('./routes/UsersRoute');
 var authRouter = require('./routes/AuthRoute');
 var messagesRouter = require('./routes/MessagesRoute');
 var avatarRouter = require('./routes/AvatarRoute');
+var groupsRouter = require('./routes/GroupsRoute');
 
 var cors = require('cors');
 
@@ -36,6 +37,7 @@ app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/messages', messagesRouter);
 app.use('/avatar', avatarRouter);
+app.use('/groups', groupsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
