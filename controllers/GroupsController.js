@@ -23,11 +23,17 @@ module.exports = {
 
   store: async (req, res) => {
     try {
-      const group = await Group.query().insertAndFetch({
+      const group = await Group.query().insertGraphAndFetch({
         name: req.body.name, 
         description: req.body.description, 
         created_by: 1,
-        created_at: new Date
+        created_at: new Date,
+        groupParticipant: [
+          {
+            user_id: 1,
+            role: 'owner',
+          }
+        ]
       }) 
 
       res.jsonData(200, "ok", group)
