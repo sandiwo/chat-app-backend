@@ -4,9 +4,9 @@ const MessagesController = require('../controllers/MessagesController')
 const passport = require('passport')
 const multer = require('../libraries/multer')
 
-router.get('/:id', [
+router.get('/group/:group', [
   passport.authenticate('jwt', {session: false}),
-  MessagesController.getByReceiver
+  MessagesController.getByGroup
 ])
 
 router.get('/:sender/:receiver', [

@@ -1,107 +1,63 @@
 const Message = require('../models/Message')
+const MessageRepository = require('../repositories/MessageRepository')
 
 module.exports = {
-  getByReceiver: (req, res) => {
-    Message.query()
-      .where({
-        receiver_id: req.params.id
-      })
-      .then(data => {
-        res.jsonData(200, "Success.", data)
-      })
-      .catch(err => {
-        res.jsonData(500, "Server error.", err.message)
-      })
+  getByGroup: async (req, res) => {
+    try {
+      const message = await MessageRepository.getByGroup(req.params.group);
+
+      res.jsonData(200, "Success.", message)
+    } catch(err) {
+      res.jsonData(500, "Server error.", err.message)
+    }
   },
 
-  getBySenderAndReceiver: (req, res) => {
-    Message.query()
-      .withGraphFetched('files')
-      .where({
-        receiver_id: req.params.receiver,
-        sender_id: req.params.sender
-      })
-      .orWhere({
-        receiver_id: req.params.sender,
-        sender_id: req.params.receiver
-      })
-      .then(data => {
-        res.jsonData(200, "Success.", data)
-      })
-      .catch(err => {
-        res.jsonData(500, "Server error.", err.message)
-      })
+  getBySenderAndReceiver: async (req, res) => {
+    try {
+      const message = await MessageRepository.getBySenderAndReceiver(
+        req.params.sender,
+        req.params.receiver
+      ) 
+
+      res.jsonData(200, "Success.", message)
+    } catch (error) {
+      res.jsonData(500, "Server error.", error.message)
+    }
   },
 
   store: async (req, res) => {
-    await Message.query()
-      .insert({
-        sender_id: req.auth().id,
-        message: req.body.message,
-        receiver_id: req.body.receiver_id,
-        type: req.body.type,
-        created_at: req.body.created_at,
-        send_at: new Date
-      })
-      .then(created => {
-        res.jsonData(200, "OK", created)
-      })
-      .catch(err => {
-        res.jsonData(500, "Database error, cannot send message.", err.message)
-      })
+    try {
+      const message = await MessageRepository.store(req)
+      res.jsonData(200, "OK", message)
+    } catch (error) {
+      res.jsonData(500, "Database error, cannot send message.", error.message)
+    }
   },
 
   storeWithFile: async (req, res) => {
-    await Message.query()
-      .insertGraphAndFetch({
-        sender_id: req.auth().id,
-        message: req.body.caption,
-        receiver_id: req.body.receiver_id,
-        type: req.body.type,
-        created_at: req.body.created_at,
-        send_at: new Date, 
-
-        files: [
-          {
-            name: req.file.originalname,
-            directory: `${req.file.destination}/${req.file.originalname}`,
-            caption: req.body.caption,
-            uploaded_at: new Date
-          }
-        ]
-      })
-      .then(created => {
-        res.jsonData(200, "OK", created)
-      })
-      .catch(err => {
-        res.jsonData(500, "Database error, cannot send message.", err.message)
-      })
+    try {
+      const messageWithFile = await MessageRepository.storeWithFile(req)
+      res.jsonData(200, "OK", messageWithFile)
+    } catch (error) {
+      res.jsonData(500, "Database error, cannot send message.", error.message)
+    }
   },
 
   update: async (req, res) => {
-    await Message.query()
-      .updateAndFetchById(req.params.id, {
-        message: req.body.message,
-        updated_at: new Date
-      })
-      .then(updated => {
-        res.jsonData(200, "OK", updated)
-      })
-      .catch(err => {
-        res.jsonData(500, "Database error, cannot update a message.", err.message)
-      })
+    try {
+      const message = await MessageRepository.update(req.params.id, req)
+      res.jsonData(200, "OK", message)
+    } catch (error) {
+      res.jsonData(500, "Database error, cannot update a message.", error.message)
+    }
   },
 
   destroy: async (req, res) => {
-    await Message.query()
-      .updateAndFetchById(req.params.id, {
-        deleted_at: new Date
-      })
-      .then(deleted => {
-        res.jsonData(200, "OK", deleted)
-      })
-      .catch(err => {
-        res.jsonData(500, "Database error, cannot delete a message.", err.message)
-      })
+    try {
+      const message = await MessageRepository.delete(req.params.id, req)
+      res.jsonData(200, "OK", message)
+    } catch (error) {
+      res.jsonData(500, "Database error, cannot delete a message.", error.message)
+    }
   }
 }

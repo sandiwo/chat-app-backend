@@ -1,5 +1,5 @@
 POST http://localhost:3000/auth/login
-content-type: application/xml
+content-type: application/json
 
 {
     "username": "sandisahdewo",
@@ -20,6 +20,16 @@ Content-Type: application/json
 }
 
 ###
+// Divider for test message behaviour
+###
+GET http://localhost:3000/messages/1/14
+Content-Type: application/json
+
+###
+GET http://localhost:3000/messages/group/1
+Content-Type: application/json
+
+###
 // Divider for test groups behaviour
 ###
 GET http://localhost:3000/groups
@@ -28,6 +38,7 @@ Content-Type: application/json
 ###
 POST http://localhost:3000/groups
 Content-Type: application/json
+
 {
     "name": "A new group",
     "description": "Testing store new group"
@@ -51,3 +62,12 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/group/1/participant
 Content-Type: application/json
+
+###
+POST http://localhost:3000/group/2/participant
+Content-Type: application/json
+
+{
+    "user_id": 2,
+    "role": "member"
+}
