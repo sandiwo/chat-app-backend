@@ -22,6 +22,7 @@ class User extends BaseModel {
   static relationMappings() {
     const Message = require('./Message')
     const Avatar = require('./Avatar')
+    const GroupParticipant = require('./GroupParticipant')
     return {
       message: {
         relation: BaseModel.HasManyRelation,
@@ -36,7 +37,15 @@ class User extends BaseModel {
         modelClass: Avatar,
         join: {
           from: 'users.id',
-          to: 'user_avatars.user_id'
+          to: 'avatars.relation_id'
+        }
+      },
+      groupParticipant: {
+        relation: BaseModel.HasOneRelation,
+        modelClass: GroupParticipant,
+        join: {
+          from: 'users.id',
+          to: 'group_participants.user_id'
         }
       }
     }

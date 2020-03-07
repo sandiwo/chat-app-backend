@@ -2,7 +2,7 @@ const BaseModel = require('./BaseModel')
 
 class Avatar extends BaseModel {
   static get tableName() {
-    return 'user_avatars';
+    return 'avatars';
   }
 
   static relationMappings() {
@@ -13,7 +13,7 @@ class Avatar extends BaseModel {
         relation: BaseModel.BelongsToOneRelation,
         modelClass: User,
         join: {
-          from: 'user_avatars.user_id',
+          from: 'avatars.relation_id',
           to: 'users.id'
         }
       }

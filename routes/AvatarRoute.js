@@ -4,7 +4,7 @@ const passport = require('passport');
 var multer = require('../libraries/multer')
 var AvatarsController = require('../controllers/AvatarsController')
 
-router.post('/upload', 
+router.post('/upload/:relation', 
   [
     passport.authenticate('jwt', {session: false}),
     multer.upload.single('avatar'), 
@@ -12,12 +12,12 @@ router.post('/upload',
   ]
 );
 
-router.get('/last-uploaded', [
+router.get('/last-uploaded/:relation', [
   passport.authenticate('jwt', {session: false}),
   AvatarsController.lastUploaded
 ])
 
-router.delete('/delete/:id', [
+router.delete('/delete/:relation/:id', [
   passport.authenticate('jwt', {session: false}),
   AvatarsController.delete
 ])

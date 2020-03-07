@@ -1,29 +1,38 @@
 var User = require('../models/User')
+var Group = require('../models/Group')
+var GroupParticipant = require('../models/GroupParticipant')
 const md5 = require('md5')
 var { ValidationError } = require('objection')
 
 module.exports = {
   get: async function(req, res) {
-    let user = null
-    if(req.query.except) {
-      user = await User.query()
-        .withGraphFetched(`[message, avatar]`)
-        .modifyGraph('message', builder => {
-          builder.where('receiver_id', req.query.except)
-          builder.where('read_at', null)
-        })
-        .whereNot({
-          id: req.query.except
-        })
-    } else {
-      user = await User.query()
-    }
+    let user = await User.query()
+      .withGraphFetched(`[message, avatar]`)
+      .modifyGraph('message', builder => {
+        builder.where('receiver_id', req.query.except)
+        builder.whereNull('created_at')
+      })
+      .modifyGraph('avatar', builder => {
+        builder.where('relation', 'user')
+      })
+      .whereNot({
+        id: req.query.except
+      })
 
-    if(user) {
-      res.jsonData(200, "Success", user);
-    } else {
-      res.jsonStatus(400, "Failed");
-    }
+    let group = await Group.query()
+      .withGraphFetched(`[avatar]`)
+      .modifyGraph('avatar', builder => {
+        builder.where('relation', 'group')
+        builder.whereNull('deleted_at')
+      })
+      .whereIn(
+        'id',
+        GroupParticipant.query()
+          .select('group_id')
+          .where('user_id', req.query.except)
+      )
+
+    res.jsonData(200, "Success.", user.concat(group));
   },
 
   find: async function(req, res) {
@@ -62,8 +71,6 @@ module.exports = {
           name: req.body.name,
           email: req.body.email,
           username: req.body.username,
-          // password: md5(req.body.password),
-          // active: req.body.active
         });
 
       if(! user) res.jsonStatus(404, "Resource not found.");
