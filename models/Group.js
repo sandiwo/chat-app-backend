@@ -6,10 +6,19 @@ class Group extends BaseModel {
   }
 
   static relationMappings() {
+    const Message = require('./Message')
     const Avatar = require('./Avatar')
     const GroupParticipant = require('./GroupParticipant')
 
     return {
+      message: {
+        relation: BaseModel.HasManyRelation,
+        modelClass: Message,
+        join: {
+          from: 'groups.id',
+          to: 'messages.relation_id'
+        }
+      },
       avatar: {
         relation: BaseModel.HasOneRelation,
         modelClass: Avatar,

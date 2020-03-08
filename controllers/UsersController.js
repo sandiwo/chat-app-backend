@@ -9,6 +9,7 @@ module.exports = {
     let user = await User.query()
       .withGraphFetched(`[message, avatar]`)
       .modifyGraph('message', builder => {
+        builder.where('relation', 'user')
         builder.where('receiver_id', req.query.except)
         builder.whereNull('created_at')
       })
@@ -20,7 +21,12 @@ module.exports = {
       })
 
     let group = await Group.query()
-      .withGraphFetched(`[avatar]`)
+      .withGraphFetched(`[message, avatar]`)
+      .modifyGraph('message', builder => {
+        builder.where('relation', 'group')
+        builder.whereNull('deleted_at')
+        builder.whereNull('created_at')
+      })
       .modifyGraph('avatar', builder => {
         builder.where('relation', 'group')
         builder.whereNull('deleted_at')
