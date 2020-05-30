@@ -13,16 +13,13 @@ class MessageRepository {
   static async getBySenderAndReceiver(sender_id, receiver_id) {
     return await Message.query()
       .withGraphFetched('files')
-      .where({
-        relation: 'user',
-        receiver_id,
-        sender_id
-      })
+      .where('relation', 'user')
       .orWhere({
-        relation: 'user',
         receiver_id,
-        sender_id
+        sender_id,
+        relation: 'user'
       })
+      .orderBy('created_at')
   }
 
   static async store(req) {
